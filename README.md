@@ -22,17 +22,13 @@ Modulol de refresco con cada cambio
 Modulo para tyscript local
 
 Complementos de typescript desde backend
-
 ## @types/node
-Complementos de typescript
 ## @types/mongoose
-Complementos de mongoose
 ## @types/express
-Complementos de express
 ## @types/morgan
-Complementos de morgan
 ## @types/helmet
-Complementos de helmet
+## @types/compression
+## @types/cors 
 
 comandos
 ## ts

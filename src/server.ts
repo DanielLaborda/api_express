@@ -6,6 +6,9 @@ import compression from 'compression';
 import cors from 'cors';
 
 import indexRoutes from './routes/indexRoutes';
+import platformtRouter from './routes/platformRoutes';
+import ReviewRouter from './routes/reviewRoutes';
+import MovieRouter from './routes/movieRoutes';
 
 class Server {
     public app: express.Application;
@@ -28,12 +31,19 @@ class Server {
         this.app.set('port', process.env.PORT || 3000);
         //middlewares
         this.app.use(morgan('dev'));
+        this.app.use(express.json());
+        this.app.use(express.urlencoded({extended: false}));
+
         this.app.use(helmet());
+        this.app.use(compression());
+        this.app.use(cors());
     }
     
     routes() {
         this.app.use(indexRoutes);
-        
+        this.app.use('/api/platforms',platformtRouter);
+        this.app.use('/api/reviews',ReviewRouter);
+        this.app.use('/api/movies',MovieRouter);
     }
 
     start() {
