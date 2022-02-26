@@ -1,9 +1,10 @@
 import { Request, Response, Router } from "express";
 
 import Movie from '../models/movie';
+import Review from "../models/review";
 
 class MovieRouter {
-    //Rutas de Reviews
+    //Rutas de movies
     router: Router;
 
     constructor() {
@@ -12,18 +13,63 @@ class MovieRouter {
     }
 
     public async getMovies(req: Request, res: Response):Promise<void> {
-        const movies =  await Movie.find().populate('platform reviews');
+        var options = {
+            query: {},
+            sort: { date: -1 },
+            populate: "account",
+            limit: 5
+          };
+        const movies = await Movie.paginate(options);
         res.json(movies);
     }
 
-    public async getMovie(req: Request, res: Response):Promise<void> {
-        const getMovie = await Movie.findOne({_id: req.params.id}).populate('platform reviews');
-        if(getMovie==undefined){
-            res.json('Ese Dato no existe')
-        }else {
-            res.json(getMovie);
+
+    public async getMovie(req: Request, res: Response):Promise <void> {
+        let reviews:any[] = [];
+        // consultamos la pelicula
+        const movie = await Movie.findOne({_id: req.params.id}).populate('reviews');
+        if(movie !== null) {
+            movie.reviews.map((aux:any) =>{
+                reviews.push({
+                    "_id":aux._id.toString(),
+                    "platform":aux.platform.toString(),
+                    "author": aux.author,
+                    "body": aux.body,
+                    "score" : aux.score,
+                    "createAT": aux.createAT,
+                    "updateAT": aux.updateAT
+                });
+            })
+            //ordenamos las reviews
+            reviews.sort((n1,n2) =>{
+                if (n1.platform > n2.platform) {
+                    return 1;
+                }
+                if (n1.platform < n2.platform) {
+                    return -1;
+                }   
+                return 0;
+            });
+            // mostramos resultados
+            const result = {
+                _id: movie._id,
+                slug: movie.slug,
+                image: movie.image,
+                title: movie.title,
+                director: movie.director,
+                platform: movie.platform,
+                score: movie.score,
+                createAt: movie.createAt,
+                updateAT: movie.updateAT,
+                reviews: reviews
+            }
+            res.json(result);
+        } else {
+            res.json("Un error ocurrio");
         }
+        
     }
+
 
     public async createMovie(req:Request, res: Response):Promise<void> {
         const newMovie = new Movie(req.body);
@@ -32,13 +78,36 @@ class MovieRouter {
     }
 
     public async updateMovie(req:Request, res: Response):Promise<void> {
-        const newMovie= await Movie.findOneAndUpdate({_id: req.params.id}, req.body, {new: true});
-        res.json(newMovie);
+        await Movie.findOne({_id: req.params.id}, function(error:any,doc:any) {
+            if (error) {
+                res.json('this id is incorrect');
+            } else {
+                const newMovie= Movie.findOneAndUpdate({_id: req.params.id}, req.body, {new: true});
+                res.json(newMovie);
+            }
+        });
+        
     }
 
     public async deleteMovie(req: Request, res: Response):Promise<void> {
         await Movie.findOneAndDelete({_id: req.params.id});
         res.json('se borro con exito');    
+    }
+
+    public async createReviewMovie(req: Request, res: Response):Promise<void> {
+        const newReview = new Review(req.body);
+        await newReview.save();
+        console.log(newReview);
+        const movie = await Movie.findOne({_id: req.params.id}).populate('reviews'); 
+        let updateReview:any[] = [];
+
+        if(movie){
+            updateReview = movie.reviews;
+            updateReview.push({newReview});
+        }
+        
+        const newMovie= await Movie.findOneAndUpdate({_id: req.params.id}, {"reviews": updateReview}, {new: true});
+        res.json(newMovie);        
     }
 
     routes() {
@@ -47,6 +116,7 @@ class MovieRouter {
         this.router.post('/', this.createMovie);
         this.router.put('/:id', this.updateMovie);
         this.router.delete('/:id', this.deleteMovie);
+        this.router.post('/createReview/:id', this.createReviewMovie);
     }
 }
 const movieRoutes = new MovieRouter();

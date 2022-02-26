@@ -18,12 +18,14 @@ class PlatformtRouter {
     }
 
     public async getPlatform(req: Request, res: Response):Promise<void> {
-        const platform = await Platform.findOne({_id: req.params.id});
-        if(platform==undefined){
-            res.json('Ese Dato no existe')
-        }else {
-            res.json(platform);
-        }
+        await Platform.findOne({_id: req.params.id}, function(error:any, doc:any){
+            if(error) {
+                res.json('This ID is incorrect')
+            } else {
+                res.json(doc)
+            }
+        });
+        
     }
 
     public async createPlatform(req:Request, res: Response):Promise<void> {
@@ -35,39 +37,29 @@ class PlatformtRouter {
         res.json({data: newPlatform});      
     }
 
-    public async updatePlatform(req: Request, res: Response):Promise<void> {        
-        let updateDateNew, createDateNew, newData ;
-        if(req.body.updateAT){
-            updateDateNew = new Date(req.body.updateAT);
-        } 
-        if(req.body.createAt){
-            createDateNew = new Date(req.body.createAt);
-        } 
-        if(updateDateNew  && createDateNew) {
-            newData = {
-                icon: req.body.icon,
-                title: req.body.title,
-                createAt: createDateNew,
-                updateAT: updateDateNew
-            }
-        }  else if (createDateNew) {
-            newData = {
-                icon: req.body.icon,
-                title: req.body.title,
-                createAt: createDateNew
-            }
-        } else if(updateDateNew){
-            newData = {
-                icon: req.body.icon,
-                title: req.body.title,
-                updateAT: updateDateNew
-            }
-        } else {
-            newData = req.body;
-        }
+    public async updatePlatform(req: Request, res: Response):Promise<void> { 
+        let errorMessage;       
+        let createDateNew ;
+    
 
-        const newPlatform= await Platform.findOneAndUpdate({_id: req.params.id}, newData, {new: true});
-        res.json(newPlatform);    
+            if(req.body.createAT){
+                if(isNaN(Date.parse(req.body.createAT))){
+                    errorMessage ="Create date error";
+                } else {
+                    createDateNew = new Date(req.body.createAT);
+                }
+            }
+            if (errorMessage){
+                res.json({error: errorMessage}); 
+            } else {
+                req.body.updateAT =Date.now();
+                if( createDateNew ) {
+                    req.body.createAT = createDateNew;
+                }
+            }
+            console.log(req.body);
+            const newPlatform= await Platform.findOneAndUpdate({_id: req.params.id}, req.body, {new: true});
+            res.json(newPlatform);
     }
 
     public async deletePlatform(req: Request, res: Response):Promise<void> {

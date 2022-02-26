@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const util_1 = require("util");
 const review_1 = __importDefault(require("../models/review"));
 class ReviewRouter {
     constructor() {
@@ -27,20 +28,32 @@ class ReviewRouter {
     }
     getReview(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const getReview = yield review_1.default.findOne({ _id: req.params.id }).populate('platform');
-            if (getReview == undefined) {
-                res.json('Ese Dato no existe');
-            }
-            else {
-                res.json(getReview);
-            }
+            yield review_1.default.findOne({ _id: req.params.id }, function (error, doc) {
+                if (error) {
+                    res.json('This ID is incorrect');
+                }
+                else {
+                    res.json(doc);
+                }
+            });
         });
     }
     createReview(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newReview = new review_1.default(req.body);
-            yield newReview.save();
-            res.json({ data: newReview });
+            let dataInvalid = false;
+            if (req.body.score) {
+                if (!(0, util_1.isNumber)(req.body.score) || req.body.score < -1 || req.body.score > 6) {
+                    dataInvalid = true;
+                }
+            }
+            if (!dataInvalid) {
+                const newReview = new review_1.default(req.body);
+                yield newReview.save();
+                res.json({ data: newReview });
+            }
+            else {
+                res.json("Data not valid");
+            }
         });
     }
     updateReview(req, res) {

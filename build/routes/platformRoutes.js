@@ -27,13 +27,14 @@ class PlatformtRouter {
     }
     getPlatform(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const platform = yield platform_1.default.findOne({ _id: req.params.id });
-            if (platform == undefined) {
-                res.json('Ese Dato no existe');
-            }
-            else {
-                res.json(platform);
-            }
+            yield platform_1.default.findOne({ _id: req.params.id }, function (error, doc) {
+                if (error) {
+                    res.json('This ID is incorrect');
+                }
+                else {
+                    res.json(doc);
+                }
+            });
         });
     }
     createPlatform(req, res) {
@@ -48,39 +49,27 @@ class PlatformtRouter {
     }
     updatePlatform(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let updateDateNew, createDateNew, newData;
-            if (req.body.updateAT) {
-                updateDateNew = new Date(req.body.updateAT);
+            let errorMessage;
+            let createDateNew;
+            if (req.body.createAT) {
+                if (isNaN(Date.parse(req.body.createAT))) {
+                    errorMessage = "Create date error";
+                }
+                else {
+                    createDateNew = new Date(req.body.createAT);
+                }
             }
-            if (req.body.createAt) {
-                createDateNew = new Date(req.body.createAt);
-            }
-            if (updateDateNew && createDateNew) {
-                newData = {
-                    icon: req.body.icon,
-                    title: req.body.title,
-                    createAt: createDateNew,
-                    updateAT: updateDateNew
-                };
-            }
-            else if (createDateNew) {
-                newData = {
-                    icon: req.body.icon,
-                    title: req.body.title,
-                    createAt: createDateNew
-                };
-            }
-            else if (updateDateNew) {
-                newData = {
-                    icon: req.body.icon,
-                    title: req.body.title,
-                    updateAT: updateDateNew
-                };
+            if (errorMessage) {
+                res.json({ error: errorMessage });
             }
             else {
-                newData = req.body;
+                req.body.updateAT = Date.now();
+                if (createDateNew) {
+                    req.body.createAT = createDateNew;
+                }
             }
-            const newPlatform = yield platform_1.default.findOneAndUpdate({ _id: req.params.id }, newData, { new: true });
+            console.log(req.body);
+            const newPlatform = yield platform_1.default.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true });
             res.json(newPlatform);
         });
     }

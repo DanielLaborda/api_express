@@ -20,6 +20,8 @@ Modulo para reducir la respuesta del backend
 Modulol de refresco con cada cambio
 ## typescript
 Modulo para tyscript local
+## mongoose-paginate-ts
+Modulo para paginar
 
 Complementos de typescript desde backend
 ## @types/node

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
+const mongoose_paginate_ts_1 = require("mongoose-paginate-ts");
 const MovieSchema = new mongoose_1.Schema({
     slug: { type: String },
     image: { type: String, lowercase: true },
@@ -18,4 +19,7 @@ const MovieSchema = new mongoose_1.Schema({
             ref: 'Review'
         }],
 });
-exports.default = (0, mongoose_1.model)('Movie', MovieSchema);
+MovieSchema.plugin(mongoose_paginate_ts_1.mongoosePagination);
+const Movie = (0, mongoose_1.model)("Movies", MovieSchema);
+// export default model('Movie', MovieSchema);
+exports.default = Movie;

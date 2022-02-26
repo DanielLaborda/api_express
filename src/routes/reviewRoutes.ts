@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { isNumber } from "util";
 
 import Review from "../models/review";
 
@@ -18,22 +19,34 @@ class ReviewRouter {
     }
 
     public async getReview(req: Request, res: Response):Promise<void> {
-        const getReview = await Review.findOne({_id: req.params.id}).populate('platform');
-        if(getReview==undefined){
-            res.json('Ese Dato no existe')
-        }else {
-            res.json(getReview);
-        }
+        await Review.findOne({_id: req.params.id}, function(error:any,doc:any) {
+            if (error) {
+                res.json('This ID is incorrect');
+            } else {
+                res.json(doc);
+            }
+        });
     }
 
     public async createReview(req:Request, res: Response):Promise<void> {
-        const newReview = new Review(req.body);
-        await newReview.save(); 
-        res.json({data: newReview});      
+        let dataInvalid = false;
+        if(req.body.score){
+            if (!isNumber(req.body.score) || req.body.score<-1 || req.body.score>6 ){
+                dataInvalid = true;
+            }
+        }
+
+        if(!dataInvalid){
+            const newReview = new Review(req.body);
+            await newReview.save();
+            res.json({data: newReview}); 
+        } else {
+            res.json("Data not valid"); 
+        }
     }
 
     public async updateReview(req: Request, res: Response):Promise<void> {        
-        const newReview= await Review.findOneAndUpdate({_id: req.params.id}, req.body, {new: true});
+        const newReview = await Review.findOneAndUpdate({_id: req.params.id}, req.body, {new: true});
         res.json(newReview);    
     }
 
