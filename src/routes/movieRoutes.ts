@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import axios from 'axios';
 
 import Movie from '../models/movie';
 import Review from "../models/review";
@@ -72,9 +73,42 @@ class MovieRouter {
 
 
     public async createMovie(req:Request, res: Response):Promise<void> {
-        const newMovie = new Movie(req.body);
-        await newMovie.save(); 
-        res.json({data: newMovie});           
+        const title = req.body.title;
+        let existMovieID = "";
+
+        //Consultamos la lista de pelis
+        const url = 'http://localhost:7000/api/movies/';
+        const movies = await axios.get(url).then(response => {
+            return response.data;
+                  
+        }).catch(error => {
+            console.log("Error en la api" + error);    
+            return '';
+        });
+        movies.map((element:any) => {
+            if(title === element.title ) {
+                existMovieID = element._id;
+            }
+        });
+
+        // creamos o modificamos
+        if(!existMovieID) {
+            const newMovie = new Movie(req.body);
+            await newMovie.save(); 
+            res.json({data: newMovie});       
+        } else {  
+            
+            console.log(existMovieID);
+            let updateData: {[key: string]: any} = {'title': req.body.title};
+            if(req.body.image) {
+                updateData['image'] = req.body.image;
+            }
+            if(req.body.director) {
+                updateData['director'] = req.body.director;
+            }
+            const updateMovie = await Movie.findOneAndUpdate({_id: existMovieID}, updateData, {new: true});
+            res.json(updateMovie)
+        }
     }
 
     public async updateMovie(req:Request, res: Response):Promise<void> {

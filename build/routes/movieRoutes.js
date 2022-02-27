@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const axios_1 = __importDefault(require("axios"));
 const movie_1 = __importDefault(require("../models/movie"));
 const review_1 = __importDefault(require("../models/review"));
 class MovieRouter {
@@ -81,9 +82,39 @@ class MovieRouter {
     }
     createMovie(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newMovie = new movie_1.default(req.body);
-            yield newMovie.save();
-            res.json({ data: newMovie });
+            const title = req.body.title;
+            let existMovieID = "";
+            //Consultamos la lista de pelis
+            const url = 'http://localhost:7000/api/movies/';
+            const movies = yield axios_1.default.get(url).then(response => {
+                return response.data;
+            }).catch(error => {
+                console.log("Error en la api" + error);
+                return '';
+            });
+            movies.map((element) => {
+                if (title === element.title) {
+                    existMovieID = element._id;
+                }
+            });
+            // creamos o modificamos
+            if (!existMovieID) {
+                const newMovie = new movie_1.default(req.body);
+                yield newMovie.save();
+                res.json({ data: newMovie });
+            }
+            else {
+                console.log(existMovieID);
+                let updateData = { 'title': req.body.title };
+                if (req.body.image) {
+                    updateData['image'] = req.body.image;
+                }
+                if (req.body.director) {
+                    updateData['director'] = req.body.director;
+                }
+                const updateMovie = yield movie_1.default.findOneAndUpdate({ _id: existMovieID }, updateData, { new: true });
+                res.json(updateMovie);
+            }
         });
     }
     updateMovie(req, res) {
