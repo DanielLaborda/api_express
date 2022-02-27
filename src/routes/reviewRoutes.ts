@@ -1,7 +1,7 @@
-import { Request, Response, Router } from "express";
-import { isNumber } from "util";
+import { Request, Response, Router } from 'express';
+import { isNumber } from 'util';
 
-import Review from "../models/review";
+import Review from '../models/review';
 
 class ReviewRouter {
     //Rutas de Reviews
@@ -41,7 +41,7 @@ class ReviewRouter {
             await newReview.save();
             res.json({data: newReview}); 
         } else {
-            res.json("Data not valid"); 
+            res.json('Data not valid'); 
         }
     }
 

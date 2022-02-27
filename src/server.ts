@@ -26,7 +26,7 @@ class Server {
             useNewUrlParser: true,
             useCreateIndex: true
         })
-            .then(db => console.log('DB is conected'))
+            .then(db => console.log('DB is conected'));
         //settings
         this.app.set('port', process.env.PORT || 3000);
         //middlewares

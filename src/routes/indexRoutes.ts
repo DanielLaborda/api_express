@@ -10,7 +10,7 @@ class IndexRoutes {
     }
 
     routes() {
-        this.router.get('/', (req, res) => { res.send('API: /api/platform') } );
+        this.router.get('/', (req:Request, res:Response) => { res.send('API: /api/platform'); } );
     }
 }
 

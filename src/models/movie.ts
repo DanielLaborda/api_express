@@ -1,16 +1,16 @@
-import { Schema, model, Document, Types } from 'mongoose';
-import { mongoosePagination, Pagination } from "mongoose-paginate-ts";
+import { Schema, model, Document } from 'mongoose';
+import { mongoosePagination, Pagination } from 'mongoose-paginate-ts';
 
 type Movie = Document & {
-    slug: {type: String},
-    image: { type: String, lowercase:true },
-    title: { type: String },
-    director: { type: String },
+    slug: {type: string},
+    image: { type: string, lowercase:true },
+    title: { type: string },
+    director: { type: string },
     platform: [{
         type: Schema.Types.ObjectId,
         ref: 'Platform'
     }],
-    score: {type: Number},
+    score: {type: number},
     createAt: { type: Date },
     updateAT: { type: Date },
     reviews: [{
@@ -39,7 +39,7 @@ const MovieSchema = new Schema( {
 });
 
 MovieSchema.plugin(mongoosePagination);
-const Movie: Pagination<Movie> = model<Movie, Pagination<Movie>>("Movies", MovieSchema);
+const Movie: Pagination<Movie> = model<Movie, Pagination<Movie>>('Movies', MovieSchema);
 
 // export default model('Movie', MovieSchema);
 export default Movie;

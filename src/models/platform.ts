@@ -8,4 +8,4 @@ const PlatformSchema = new Schema( {
 
 });
 
-export default model('Platform', PlatformSchema)
+export default model('Platform', PlatformSchema);

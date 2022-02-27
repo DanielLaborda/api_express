@@ -1,8 +1,8 @@
-import { Request, Response, Router } from "express";
+import { Request, Response, Router } from 'express';
 import axios from 'axios';
 
 import Movie from '../models/movie';
-import Review from "../models/review";
+import Review from '../models/review';
 
 class MovieRouter {
     //Rutas de movies
@@ -14,33 +14,33 @@ class MovieRouter {
     }
 
     public async getMovies(req: Request, res: Response):Promise<void> {
-        var options = {
+        const options = {
             query: {},
             sort: { date: -1 },
-            populate: "account",
+            populate: 'account',
             limit: 5
-          };
+        };
         const movies = await Movie.paginate(options);
         res.json(movies);
     }
 
 
     public async getMovie(req: Request, res: Response):Promise <void> {
-        let reviews:any[] = [];
+        const reviews:any[] = [];
         // consultamos la pelicula
         const movie = await Movie.findOne({_id: req.params.id}).populate('reviews');
         if(movie !== null) {
             movie.reviews.map((aux:any) =>{
                 reviews.push({
-                    "_id":aux._id.toString(),
-                    "platform":aux.platform.toString(),
-                    "author": aux.author,
-                    "body": aux.body,
-                    "score" : aux.score,
-                    "createAT": aux.createAT,
-                    "updateAT": aux.updateAT
+                    '_id':aux._id.toString(),
+                    'platform':aux.platform.toString(),
+                    'author': aux.author,
+                    'body': aux.body,
+                    'score' : aux.score,
+                    'createAT': aux.createAT,
+                    'updateAT': aux.updateAT
                 });
-            })
+            });
             //ordenamos las reviews
             reviews.sort((n1,n2) =>{
                 if (n1.platform > n2.platform) {
@@ -63,10 +63,10 @@ class MovieRouter {
                 createAt: movie.createAt,
                 updateAT: movie.updateAT,
                 reviews: reviews
-            }
+            };
             res.json(result);
         } else {
-            res.json("Un error ocurrio");
+            res.json('Un error ocurrio');
         }
         
     }
@@ -74,7 +74,7 @@ class MovieRouter {
 
     public async createMovie(req:Request, res: Response):Promise<void> {
         const title = req.body.title;
-        let existMovieID = "";
+        let existMovieID = '';
 
         //Consultamos la lista de pelis
         const url = 'http://localhost:7000/api/movies/';
@@ -82,7 +82,7 @@ class MovieRouter {
             return response.data;
                   
         }).catch(error => {
-            console.log("Error en la api" + error);    
+            console.log('Error en la api' + error);    
             return '';
         });
         movies.map((element:any) => {
@@ -99,7 +99,7 @@ class MovieRouter {
         } else {  
             
             console.log(existMovieID);
-            let updateData: {[key: string]: any} = {'title': req.body.title};
+            const updateData: {[key: string]: any} = {'title': req.body.title};
             if(req.body.image) {
                 updateData['image'] = req.body.image;
             }
@@ -107,14 +107,14 @@ class MovieRouter {
                 updateData['director'] = req.body.director;
             }
             const updateMovie = await Movie.findOneAndUpdate({_id: existMovieID}, updateData, {new: true});
-            res.json(updateMovie)
+            res.json(updateMovie);
         }
     }
 
     public async updateMovie(req:Request, res: Response):Promise<void> {
         await Movie.findOne({_id: req.params.id}, function(error:any,doc:any) {
             if (error) {
-                res.json('this id is incorrect');
+                res.json('this ID is incorrect');
             } else {
                 const newMovie= Movie.findOneAndUpdate({_id: req.params.id}, req.body, {new: true});
                 res.json(newMovie);
@@ -140,7 +140,7 @@ class MovieRouter {
             updateReview.push({newReview});
         }
         
-        const newMovie= await Movie.findOneAndUpdate({_id: req.params.id}, {"reviews": updateReview}, {new: true});
+        const newMovie= await Movie.findOneAndUpdate({_id: req.params.id}, {'reviews': updateReview}, {new: true});
         res.json(newMovie);        
     }
 

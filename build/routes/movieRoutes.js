@@ -1,21 +1,21 @@
-"use strict";
+'use strict';
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator['throw'](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+    return (mod && mod.__esModule) ? mod : { 'default': mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const axios_1 = __importDefault(require("axios"));
-const movie_1 = __importDefault(require("../models/movie"));
-const review_1 = __importDefault(require("../models/review"));
+Object.defineProperty(exports, '__esModule', { value: true });
+const express_1 = require('express');
+const axios_1 = __importDefault(require('axios'));
+const movie_1 = __importDefault(require('../models/movie'));
+const review_1 = __importDefault(require('../models/review'));
 class MovieRouter {
     constructor() {
         this.router = (0, express_1.Router)();
@@ -23,10 +23,10 @@ class MovieRouter {
     }
     getMovies(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            var options = {
+            const options = {
                 query: {},
                 sort: { date: -1 },
-                populate: "account",
+                populate: 'account',
                 limit: 5
             };
             const movies = yield movie_1.default.paginate(options);
@@ -35,19 +35,19 @@ class MovieRouter {
     }
     getMovie(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let reviews = [];
+            const reviews = [];
             // consultamos la pelicula
             const movie = yield movie_1.default.findOne({ _id: req.params.id }).populate('reviews');
             if (movie !== null) {
                 movie.reviews.map((aux) => {
                     reviews.push({
-                        "_id": aux._id.toString(),
-                        "platform": aux.platform.toString(),
-                        "author": aux.author,
-                        "body": aux.body,
-                        "score": aux.score,
-                        "createAT": aux.createAT,
-                        "updateAT": aux.updateAT
+                        '_id': aux._id.toString(),
+                        'platform': aux.platform.toString(),
+                        'author': aux.author,
+                        'body': aux.body,
+                        'score': aux.score,
+                        'createAT': aux.createAT,
+                        'updateAT': aux.updateAT
                     });
                 });
                 //ordenamos las reviews
@@ -76,20 +76,20 @@ class MovieRouter {
                 res.json(result);
             }
             else {
-                res.json("Un error ocurrio");
+                res.json('Un error ocurrio');
             }
         });
     }
     createMovie(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const title = req.body.title;
-            let existMovieID = "";
+            let existMovieID = '';
             //Consultamos la lista de pelis
             const url = 'http://localhost:7000/api/movies/';
             const movies = yield axios_1.default.get(url).then(response => {
                 return response.data;
             }).catch(error => {
-                console.log("Error en la api" + error);
+                console.log('Error en la api' + error);
                 return '';
             });
             movies.map((element) => {
@@ -105,7 +105,7 @@ class MovieRouter {
             }
             else {
                 console.log(existMovieID);
-                let updateData = { 'title': req.body.title };
+                const updateData = { 'title': req.body.title };
                 if (req.body.image) {
                     updateData['image'] = req.body.image;
                 }
@@ -121,7 +121,7 @@ class MovieRouter {
         return __awaiter(this, void 0, void 0, function* () {
             yield movie_1.default.findOne({ _id: req.params.id }, function (error, doc) {
                 if (error) {
-                    res.json('this id is incorrect');
+                    res.json('this ID is incorrect');
                 }
                 else {
                     const newMovie = movie_1.default.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true });
@@ -147,7 +147,7 @@ class MovieRouter {
                 updateReview = movie.reviews;
                 updateReview.push({ newReview });
             }
-            const newMovie = yield movie_1.default.findOneAndUpdate({ _id: req.params.id }, { "reviews": updateReview }, { new: true });
+            const newMovie = yield movie_1.default.findOneAndUpdate({ _id: req.params.id }, { 'reviews': updateReview }, { new: true });
             res.json(newMovie);
         });
     }

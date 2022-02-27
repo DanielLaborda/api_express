@@ -1,18 +1,18 @@
-"use strict";
+'use strict';
 var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+    return (mod && mod.__esModule) ? mod : { 'default': mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const morgan_1 = __importDefault(require("morgan"));
-const helmet_1 = __importDefault(require("helmet"));
-const mongoose_1 = __importDefault(require("mongoose"));
-const compression_1 = __importDefault(require("compression"));
-const cors_1 = __importDefault(require("cors"));
-const indexRoutes_1 = __importDefault(require("./routes/indexRoutes"));
-const platformRoutes_1 = __importDefault(require("./routes/platformRoutes"));
-const reviewRoutes_1 = __importDefault(require("./routes/reviewRoutes"));
-const movieRoutes_1 = __importDefault(require("./routes/movieRoutes"));
+Object.defineProperty(exports, '__esModule', { value: true });
+const express_1 = __importDefault(require('express'));
+const morgan_1 = __importDefault(require('morgan'));
+const helmet_1 = __importDefault(require('helmet'));
+const mongoose_1 = __importDefault(require('mongoose'));
+const compression_1 = __importDefault(require('compression'));
+const cors_1 = __importDefault(require('cors'));
+const indexRoutes_1 = __importDefault(require('./routes/indexRoutes'));
+const platformRoutes_1 = __importDefault(require('./routes/platformRoutes'));
+const reviewRoutes_1 = __importDefault(require('./routes/reviewRoutes'));
+const movieRoutes_1 = __importDefault(require('./routes/movieRoutes'));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
