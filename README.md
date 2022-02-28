@@ -1,6 +1,6 @@
 # Api Daniel Laborda prueba GGTECH
 
-Proyecto realizado para la prueba tecnica Backend para ggtech realizado en Nodejs con framework Expres en typescript. 
+Proyecto realizado para la prueba tecnica Backend para ggtech realizado en Nodejs con framework Expres en typescript y en mongoDb como base de datos. 
 
 ---
 
