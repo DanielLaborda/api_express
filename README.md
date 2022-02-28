@@ -26,22 +26,29 @@ Para crear una pelicula y que valide la pelicula por titulo si existe o no, cons
 > Note: Esta información se obtendra del json de entrada.
 > Note (Admistración): Se debe cambiar el campo url en la función "createMovie" el el fichero "MovieRoutes.ts" para cambia a nuestra API externa.
 
-para usar este endpoint se llamará a la API con:
+Para usar este endpoint se llamará a la API con:
 ```sh
 POST/ http://localhost:3000/api/movies/
 ```
 
 **Al mostrar una película por ID se deben mostrar las reseñas por plataforma**
-para usar este endpoint se llamará a la API con:
+Para usar este endpoint se llamará a la API con:
 ```sh
 GET/ http://localhost:3000/api/movies/"ID"
 ```
 
 **Crear reseña de una película**
-para usar este endpoint se llamará a la API con:
+Para usar este endpoint se llamará a la API con:
 ```sh
 POST/ http://localhost:3000/api/movies/createReview/"ID de la pelicula"
 ```
+
+**Clonar pelicula**
+Para clonar una pelicula se llamara a la API con:
+```sh
+POST/ http://localhost:3000/api/movies/cloneMovie/"ID de la pelicula"
+```
+
 
 ## Modulos
 Modulos utilizados e instalados en el proyecto para funcionamiento correcto de la API.

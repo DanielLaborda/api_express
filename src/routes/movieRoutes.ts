@@ -144,13 +144,38 @@ class MovieRouter {
         res.json(newMovie);        
     }
 
+    public async cloneMovie(req:Request, res: Response):Promise<void> {
+        await Movie.findOne({_id: req.params.id}, {_id: false}, async function(error:any,doc:any) {
+            if (error) {
+                res.json('this ID is incorrect');
+            } else {
+                const newData = {
+                    'slug': doc.slug,
+                    'image': doc.image,
+                    'title':doc.title,
+                    'director': doc.director,
+                    'platform': doc.platform,
+                    'score': doc.score,
+                    'createAt': doc.createAt,
+                    'updateAT': doc.updateAT,
+                    'reviews': doc.reviews
+                };
+                const newMovie = new Movie(newData);
+                await newMovie.save(); 
+                res.json({data: newMovie});  
+            }
+        });
+        
+    }
+
     routes() {
         this.router.get('/', this.getMovies);
         this.router.get('/:id', this.getMovie);
         this.router.post('/', this.createMovie);
+        this.router.post('/createReview/:id', this.createReviewMovie);
+        this.router.post('/cloneMovie/:id', this.cloneMovie);
         this.router.put('/:id', this.updateMovie);
         this.router.delete('/:id', this.deleteMovie);
-        this.router.post('/createReview/:id', this.createReviewMovie);
     }
 }
 const movieRoutes = new MovieRouter();
