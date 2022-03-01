@@ -20,7 +20,7 @@ class Server {
     }
 
     config() {
-        const MONGO_URI = 'mongodb://localhost/pruebad';
+        const MONGO_URI = 'mongodb+srv://admin:admin@cluster0.81iyw.mongodb.net/Prueba?retryWrites=true&w=majority';
         mongoose.set('useFindAndModify', true);
         mongoose.connect(MONGO_URI || process.env.MONGODB_URL, {
             useNewUrlParser: true,
